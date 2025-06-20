@@ -6,61 +6,49 @@
 </head>
 <body>
   <h2>Générateur de Commentaires LSU</h2>
-
-  <form id="formulaire-de-commentaire">
-    <label>Prénom de l'élève :<br>
-      <input type="text" name="prenom" required>
-    </label><br><br>
-
-    <label>Classe :<br>
-      <input type="text" name="classe" required>
-    </label><br><br>
-
-    <label>Comportement :<br>
+  <form id="formulaire">
+    <label>Prénom de l'élève : <input type="text" name="prenom" required></label><br>
+    <label>Classe : <input type="text" name="classe" required></label><br>
+    <label>Comportement :
       <select name="comportement" required>
         <option value="Excellent">Excellent</option>
         <option value="Très bon">Très bon</option>
         <option value="Bon">Bon</option>
       </select>
-    </label><br><br>
-
+    </label><br>
     <label>Commentaire libre :<br>
-      <textarea name="libre" rows="4" cols="50" placeholder="Exemple : Élève motivé et impliqué..."></textarea>
-    </label><br><br>
-
+      <textarea name="libre" rows="4" cols="50">Exemple : Élève motivé et impliqué...</textarea>
+    </label><br>
     <input type="submit" value="Envoyer">
   </form>
 
   <h3>Commentaire généré :</h3>
-  <div id="resultatStyle" style="font-weight: bold; color: green;"></div>
+  <div id="resultat" style="font-weight: bold; color: green;"></div>
 
   <script>
-    document.getElementById("formulaire-de-commentaire").addEventListener("submit", async function (e) {
+    document.getElementById("formulaire").addEventListener("submit", async function(e) {
       e.preventDefault();
-      const formulaire = e.target;
-      const données = {
-        prenom: formulaire.prenom.value,
-        classe: formulaire.classe.value,
-        comportement: formulaire.comportement.value,
-        libre: formulaire.libre.value,
+      const form = e.target;
+      const donnees = {
+        prenom: form.prenom.value,
+        classe: form.classe.value,
+        comportement: form.comportement.value,
+        libre: form.libre.value
       };
 
       try {
-        const réponse = await fetch("https://n8n.srv765539.hstgr.cloud/webhook/générer-commentaire", {
+        const reponse = await fetch("https://n8n.srv765539.hstgr.cloud/webhook/générer-commentaire", {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
           },
-          body: JSON.stringify(données),
+          body: JSON.stringify(donnees)
         });
 
-        if (!réponse.ok) throw new Error("Erreur serveur");
-
-        const résultat = await réponse.json();
-        document.getElementById("resultatStyle").innerText = résultat.commentaire || "Réponse vide.";
+        const resultat = await reponse.json();
+        document.getElementById("resultat").innerText = resultat.commentaire || "Pas de commentaire généré.";
       } catch (err) {
-        document.getElementById("resultatStyle").innerText = "Erreur de connexion.";
-        console.error(err);
+        document.getElementById("resultat").innerText = "Erreur : " + err.message;
       }
     });
   </script>
