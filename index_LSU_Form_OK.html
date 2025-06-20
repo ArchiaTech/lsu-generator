@@ -1,0 +1,26 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Générateur de Commentaires LSU</title>
+</head>
+<body>
+  <h2>Générateur de Commentaires LSU</h2>
+  <form method="POST" action="https://n8n.srv765539.hstgr.cloud/webhook/générer-commentaire">
+    <label>Prénom de l'élève : <input type="text" name="prenom" required></label><br><br>
+    <label>Classe : <input type="text" name="classe" required></label><br><br>
+    <label>Comportement :
+      <select name="comportement" required>
+        <option value="Excellent">Excellent</option>
+        <option value="Très bon">Très bon</option>
+        <option value="Bon">Bon</option>
+      </select>
+    </label><br><br>
+    <label>Commentaire libre :<br>
+      <textarea name="commentaire" rows="4" cols="50" placeholder="Exemple : Élève motivé et impliqué..." required></textarea>
+    </label><br><br>
+    <input type="submit" value="Envoyer">
+  </form>
+</body>
+</html>
