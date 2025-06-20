@@ -1,56 +1,35 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Générateur de Commentaires LSU</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <h2>Générateur de Commentaires LSU</h2>
+  <h1>Générateur de Commentaires LSU</h1>
   <form id="formulaire">
-    <label>Prénom de l'élève : <input type="text" name="prenom" required></label><br>
-    <label>Classe : <input type="text" name="classe" required></label><br>
-    <label>Comportement :
-      <select name="comportement" required>
-        <option value="Excellent">Excellent</option>
-        <option value="Très bon">Très bon</option>
-        <option value="Bon">Bon</option>
-      </select>
-    </label><br>
-    <label>Commentaire libre :<br>
-      <textarea name="libre" rows="4" cols="50">Exemple : Élève motivé et impliqué...</textarea>
-    </label><br>
-    <input type="submit" value="Envoyer">
+    <label>Prénom :</label>
+    <input type="text" name="prenom" required><br>
+
+    <label>Classe :</label>
+    <input type="text" name="classe" required><br>
+
+    <label>Comportement :</label>
+    <select name="comportement" required>
+      <option value="Très bon">Très bon</option>
+      <option value="Bon">Bon</option>
+      <option value="À améliorer">À améliorer</option>
+    </select><br>
+
+    <label>Commentaire libre :</label><br>
+    <textarea name="commentaire" rows="4"></textarea><br>
+
+    <button type="submit">Générer</button>
   </form>
 
-  <h3>Commentaire généré :</h3>
-  <div id="resultat" style="font-weight: bold; color: green;"></div>
+  <h2>Commentaire généré :</h2>
+  <div id="resultat"></div>
 
-  <script>
-    document.getElementById("formulaire").addEventListener("submit", async function(e) {
-      e.preventDefault();
-      const form = e.target;
-      const donnees = {
-        prenom: form.prenom.value,
-        classe: form.classe.value,
-        comportement: form.comportement.value,
-        libre: form.libre.value
-      };
-
-      try {
-        const reponse = await fetch("https://n8n.srv765539.hstgr.cloud/webhook/générer-commentaire", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(donnees)
-        });
-
-        const resultat = await reponse.json();
-        document.getElementById("resultat").innerText = resultat.commentaire || "Pas de commentaire généré.";
-      } catch (err) {
-        document.getElementById("resultat").innerText = "Erreur : " + err.message;
-      }
-    });
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
