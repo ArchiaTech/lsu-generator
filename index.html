@@ -1,0 +1,66 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Générateur de Commentaires LSU</title>
+</head>
+<body>
+    <h2>Générateur de Commentaires LSU</h2>
+    <form id="lsuForm">
+        <label for="prenom">Prénom de l'élève :</label>
+        <input type="text" id="prenom" name="prenom"><br><br>
+
+        <label for="classe">Classe :</label>
+        <input type="text" id="classe" name="classe"><br><br>
+
+        <label for="comportement">Comportement :</label>
+        <select id="comportement" name="comportement">
+            <option value="Excellent">Excellent</option>
+            <option value="Très bon">Très bon</option>
+            <option value="Satisfaisant">Satisfaisant</option>
+            <option value="À améliorer">À améliorer</option>
+        </select><br><br>
+
+        <label for="commentaire">Commentaire libre :</label><br>
+        <textarea id="commentaire" name="commentaire" rows="4" cols="50"></textarea><br><br>
+
+        <button type="submit">Envoyer</button>
+    </form>
+
+    <p id="reponse"></p>
+
+    <script>
+        const form = document.getElementById('lsuForm');
+        const responsePara = document.getElementById('reponse');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const data = {};
+            formData.forEach((value, key) => data[key] = value);
+
+            fetch("https://n8n.srv765539.hstgr.cloud/webhook-test/g%C3%A9n%C3%A9rer-commentaire", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Erreur de connexion.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                responsePara.textContent = "Commentaire généré : " + data.commentaire;
+            })
+            .catch(error => {
+                responsePara.textContent = "Erreur de connexion.";
+                console.error("Erreur :", error);
+            });
+        });
+    </script>
+</body>
+</html>
