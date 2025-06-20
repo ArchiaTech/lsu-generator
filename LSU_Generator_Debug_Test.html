@@ -1,0 +1,81 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>LSU Generator Pro – Test en direct</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2em;
+      background-color: #f3f7fb;
+    }
+    h1 {
+      color: #333;
+    }
+    label, input, textarea, button {
+      display: block;
+      width: 100%;
+      margin-bottom: 1em;
+      font-size: 1em;
+    }
+    textarea {
+      height: 100px;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 0.8em;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    #resultat {
+      background: #fff;
+      padding: 1em;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Générateur de commentaire LSU (Test)</h1>
+
+  <label for="prenom">Prénom de l’élève :</label>
+  <input type="text" id="prenom" placeholder="Ex. Sarah" />
+
+  <label for="competences">Compétences ou remarques :</label>
+  <textarea id="competences" placeholder="Ex. A bien progressé en lecture..."></textarea>
+
+  <button id="generer-btn">Générer le commentaire</button>
+
+  <h2>Résultat :</h2>
+  <div id="resultat">Le commentaire apparaîtra ici...</div>
+
+  <script>
+    document.getElementById("generer-btn").addEventListener("click", async () => {
+      const prenom = document.getElementById("prenom").value;
+      const competences = document.getElementById("competences").value;
+
+      try {
+        const response = await fetch("https://n8n.srv765539.hstgr.cloud/webhook-test/generer-commentaire", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prenom, competences })
+        });
+
+        const data = await response.json();
+        console.log("✅ Réponse reçue depuis n8n :", data);
+        document.getElementById("resultat").textContent = data.commentaire || "Aucun commentaire reçu.";
+      } catch (error) {
+        console.error("❌ Erreur lors de l’appel fetch() :", error);
+        document.getElementById("resultat").textContent = "Erreur de connexion au serveur.";
+      }
+    });
+  </script>
+
+</body>
+</html>
