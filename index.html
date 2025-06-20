@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LSU Generator</title>
+</head>
+<body>
+    <h1>Générateur de Commentaires LSU</h1>
+    <form id="lsu-form">
+        <label for="prenom">Prénom de l'élève :</label>
+        <input type="text" id="prenom" name="prenom" required><br><br>
+
+        <label for="classe">Classe :</label>
+        <input type="text" id="classe" name="classe" required><br><br>
+
+        <label for="comportement">Comportement :</label>
+        <select id="comportement" name="comportement">
+            <option value="excellent">Excellent</option>
+            <option value="bon">Bon</option>
+            <option value="à améliorer">À améliorer</option>
+        </select><br><br>
+
+        <label for="commentaire">Commentaire libre :</label><br>
+        <textarea id="commentaire" name="commentaire" rows="4" cols="50"></textarea><br><br>
+
+        <button type="submit">Envoyer</button>
+    </form>
+
+    <div id="resultat"></div>
+
+    <script>
+        const form = document.getElementById('lsu-form');
+        const resultat = document.getElementById('resultat');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const data = {
+                prenom: form.prenom.value,
+                classe: form.classe.value,
+                comportement: form.comportement.value,
+                commentaire: form.commentaire.value
+            };
+
+            resultat.innerText = "Envoi en cours...";
+
+            try {
+                const response = await fetch('https://webhook.site/your-webhook-url', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    resultat.innerText = "Commentaire envoyé avec succès !";
+                    form.reset();
+                } else {
+                    resultat.innerText = "Erreur lors de l'envoi.";
+                }
+            } catch (error) {
+                resultat.innerText = "Erreur de connexion.";
+            }
+        });
+    </script>
+</body>
+</html>
