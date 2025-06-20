@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -7,7 +6,7 @@
 </head>
 <body>
   <h2>Générateur de Commentaires LSU</h2>
-  <form method="POST" action="https://n8n.srv765539.hstgr.cloud/webhook/générer-commentaire">
+  <form id="commentaireForm">
     <label>Prénom de l'élève : <input type="text" name="prenom" required></label><br><br>
     <label>Classe : <input type="text" name="classe" required></label><br><br>
     <label>Comportement :
@@ -18,9 +17,40 @@
       </select>
     </label><br><br>
     <label>Commentaire libre :<br>
-      <textarea name="commentaire" rows="4" cols="50" placeholder="Exemple : Élève motivé et impliqué..." required></textarea>
+      <textarea name="libre" rows="4" cols="50" placeholder="Exemple : Élève motivé et impliqué..."></textarea>
     </label><br><br>
     <input type="submit" value="Envoyer">
   </form>
+
+  <h3>Commentaire généré :</h3>
+  <div id="resultat" style="font-weight:bold; color:green;"></div>
+
+  <script>
+    document.getElementById("commentaireForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      const form = e.target;
+      const data = {
+        prenom: form.prenom.value,
+        classe: form.classe.value,
+        comportement: form.comportement.value,
+        libre: form.libre.value
+      };
+
+      try {
+        const response = await fetch("https://n8n.srv765539.hstgr.cloud/webhook/générer-commentaire", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        });
+
+        if (!response.ok) throw new Error("Erreur serveur");
+
+        const result = await response.json();
+        document.getElementById("resultat").innerText = result.commentaire;
+      } catch (err) {
+        document.getElementById("resultat").innerText = "Erreur : " + err.message;
+      }
+    });
+  </script>
 </body>
 </html>
