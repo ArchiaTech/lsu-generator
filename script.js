@@ -1,33 +1,49 @@
-document.getElementById("formulaire").addEventListener("soumettre", async et => {
-    et.preventDefault();
+document.obtenirElementById("formulaire").ajouterEventListener("soumettre", asynchrone et => {
+    et.empêcherDefault();
 
-    const formulaire = et.cible;
+    constante formulaire = et.cible;
 
-    const données = {
+    constante données = {
         prénom: formulaire.prénom.valeur,
         classe: formulaire.classe.valeur,
         comportement: formulaire.comportement.valeur,
         commentaire: formulaire.commentaire.valeur,
     };
 
-    try {
-        // URL modifiée pour correspondre exactement à celle configurée dans n8n
-        const réponse = await fetch("https://n8n.srv765539.hstgr.cloud/webhook-test/générer-commentaire", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
+    essayer {
+        // Afficher un message de chargement
+        document.obtenirElementById("résultat").Texte intérieur = "Génération en cours...";
+        
+        // URL modifiée pour correspondre exactement à celle configurée dans n8n (sans accent)
+        constante réponse = attendre aller chercher("https://n8n.srv765539.hstgr.cloud/webhook-test/generer-commentaire", {
+            méthode: "POST",
+            en-têtes: {
+                "Type de contenu": "application/json"
             },
-            body: JSON.stringify(données)
+            corps: JSON.chaîne de caractères(données)
         });
 
-        if (!réponse.ok) {
-            throw new Error(`Erreur HTTP: ${réponse.status}`);
+        // Vérification explicite du statut de la réponse
+        console.log("Statut de la réponse:", réponse.statut);
+        
+        si (!réponse.d'accord) {
+            lancer nouveau Erreur(`Erreur HTTP: ${réponse.statut}`);
         }
 
-        const résultat = await réponse.json();
-        document.getElementById("résultat").innerText = résultat.commentaire;
-    } catch (erreur) {
-        console.error("Erreur lors de l'appel au webhook:", erreur);
-        document.getElementById("résultat").innerText = "Erreur : " + erreur.message;
+        constante résultat = attendre réponse.json();
+        
+        // Logs pour comprendre la structure de la réponse
+        console.log("Résultat complet reçu:", résultat);
+
+        // Vérification de l'existence de la propriété commentaire
+        si (résultat && résultat.commentaire !== undefined) {
+            document.obtenirElementById("résultat").Texte intérieur = résultat.commentaire;
+        } else {
+            console.erreur("La propriété commentaire est manquante dans:", résultat);
+            document.obtenirElementById("résultat").Texte intérieur = "Erreur: Commentaire non trouvé dans la réponse";
+        }
+    } attraper (erreur) {
+        console.erreur("Erreur lors de l'appel au webhook:", erreur);
+        document.obtenirElementById("résultat").Texte intérieur = "Erreur : " + erreur.message;
     }
 });
