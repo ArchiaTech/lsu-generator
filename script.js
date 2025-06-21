@@ -1,27 +1,33 @@
-document.obtenirElementById("formulaire").ajouterEventListener("soumettre", async et => {
-    et.empêcherDefault();
+document.getElementById("formulaire").addEventListener("soumettre", async et => {
+    et.preventDefault();
 
-    constante formulaire = et.cible;
+    const formulaire = et.cible;
 
-    constante données = {
+    const données = {
         prénom: formulaire.prénom.valeur,
         classe: formulaire.classe.valeur,
         comportement: formulaire.comportement.valeur,
         commentaire: formulaire.commentaire.valeur,
     };
 
-    essayer {
-        constante réponse = attendre aller chercher("https://n8n.srv765539.hstgr.cloud/webhook/générer-commentaire", {
-            méthode: "POST",
-            en-têtes: {
-                "Type de contenu": "application/json"
+    try {
+        // URL modifiée pour correspondre exactement à celle configurée dans n8n
+        const réponse = await fetch("https://n8n.srv765539.hstgr.cloud/webhook-test/générer-commentaire", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
             },
-            corps: JSON.chaîne de caractères(données)
+            body: JSON.stringify(données)
         });
 
-        constante résultat = attendre réponse.json();
-        document.obtenirElementById("résultat").Texte intérieur = résultat.commentaire;
-    } attraper (erreur) {
-        document.obtenirElementById("résultat").Texte intérieur = "Erreur : " + erreur;
+        if (!réponse.ok) {
+            throw new Error(`Erreur HTTP: ${réponse.status}`);
+        }
+
+        const résultat = await réponse.json();
+        document.getElementById("résultat").innerText = résultat.commentaire;
+    } catch (erreur) {
+        console.error("Erreur lors de l'appel au webhook:", erreur);
+        document.getElementById("résultat").innerText = "Erreur : " + erreur.message;
     }
 });
