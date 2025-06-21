@@ -15,8 +15,11 @@ document.getElementById("formulaire").addEventListener("submit", async function(
         // Afficher un message de chargement
         document.getElementById("resultat").innerText = "Génération en cours...";
         
-        // URL sans accent pour éviter les problèmes d'encodage
-        const réponse = await fetch("https://n8n.srv765539.hstgr.cloud/webhook-test/generer-commentaire", {
+        // Utilisation d'un proxy CORS pour contourner les restrictions
+        const proxyUrl = "https://corsproxy.io/?";
+        const targetUrl = "https://n8n.srv765539.hstgr.cloud/webhook-test/generer-commentaire";
+        
+        const réponse = await fetch(proxyUrl + encodeURIComponent(targetUrl), {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
