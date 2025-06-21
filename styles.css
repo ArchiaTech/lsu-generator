@@ -1,11 +1,28 @@
 body {
-  font-family: Arial;
-  max-width: 600px;
-  margin: auto;
-  padding: 2rem;
+    font-family: Arial;
+    max-width: 600px;
+    margin: auto;
+    padding: 2rem;
 }
 
 input, select, textarea {
-  width: 100%;
-  margin-bottom: 1rem;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+button {
+    padding: 0.5rem 1rem;
+    margin-top: 1rem;
+}
+
+#resultat {
+    margin-top: 2rem;
+    padding: 1rem;
+    border: 1px solid #ccc;
+    min-height: 50px;
 }
