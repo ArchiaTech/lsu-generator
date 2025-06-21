@@ -1,20 +1,21 @@
 document.getElementById("formulaire").addEventListener("submit", async function(event) {
     event.preventDefault();
-
-    const formulaire = event.target;
-
+    
+    // Récupérer les valeurs directement par leur ID
     const données = {
-        prénom: formulaire.prénom.value,
-        classe: formulaire.classe.value,
-        comportement: formulaire.comportement.value,
-        commentaire: formulaire.commentaire.value
+        prénom: document.getElementById("prenom").value,
+        classe: document.getElementById("classe").value,
+        comportement: document.getElementById("comportement").value,
+        commentaire: document.getElementById("commentaire").value
     };
-
+    
+    console.log("Données envoyées:", données);
+    
     try {
         // Afficher un message de chargement
-        document.getElementById("résultat").innerText = "Génération en cours...";
+        document.getElementById("resultat").innerText = "Génération en cours...";
         
-        // URL sans accent
+        // URL sans accent pour éviter les problèmes d'encodage
         const réponse = await fetch("https://n8n.srv765539.hstgr.cloud/webhook-test/generer-commentaire", {
             method: "POST",
             headers: {
@@ -22,28 +23,25 @@ document.getElementById("formulaire").addEventListener("submit", async function(
             },
             body: JSON.stringify(données)
         });
-
-        // Vérification du statut
+        
         console.log("Statut de la réponse:", réponse.status);
         
         if (!réponse.ok) {
             throw new Error(`Erreur HTTP: ${réponse.status}`);
         }
-
-        const résultat = await réponse.json();
         
-        // Log pour le débogage
+        const résultat = await réponse.json();
         console.log("Résultat complet:", résultat);
-
+        
         // Vérification de la propriété commentaire
         if (résultat && résultat.commentaire !== undefined) {
-            document.getElementById("résultat").innerText = résultat.commentaire;
+            document.getElementById("resultat").innerText = résultat.commentaire;
         } else {
             console.error("La propriété commentaire est manquante:", résultat);
-            document.getElementById("résultat").innerText = "Erreur: Commentaire non trouvé dans la réponse";
+            document.getElementById("resultat").innerText = "Erreur: Commentaire non trouvé dans la réponse";
         }
     } catch (erreur) {
         console.error("Erreur lors de l'appel au webhook:", erreur);
-        document.getElementById("résultat").innerText = "Erreur : " + erreur.message;
+        document.getElementById("resultat").innerText = "Erreur : " + erreur.message;
     }
 });
