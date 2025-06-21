@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Générateur de Commentaires LSU</title>
+    <style>
+        body {
+            font-family: Arial;
+            max-width: 600px;
+            margin: auto;
+            padding: 2rem;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
+        button {
+            padding: 0.5rem 1rem;
+            margin-top: 1rem;
+            margin-right: 0.5rem;
+        }
+        
+        #resultat {
+            margin-top: 2rem;
+            padding: 1rem;
+            border: 1px solid #ccc;
+            min-height: 50px;
+        }
+        
+        .boutons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        #telecharger {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: none; /* Caché par défaut */
+        }
+        
+        #telecharger:hover {
+            background-color: #45a049;
+        }
+        
+        .info {
+            margin-top: 1rem;
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <h1>Générateur de Commentaires LSU</h1>
+    
+    <form id="formulaire">
+        <label for="prenom">Prénom :</label>
+        <input type="text" id="prenom" name="prenom" required>
+        
+        <label for="classe">Classe :</label>
+        <input type="text" id="classe" name="classe" required>
+        
+        <label for="comportement">Comportement :</label>
+        <select id="comportement" name="comportement" required>
+            <option value="Très bon">Très bon</option>
+            <option value="Bon">Bon</option>
+            <option value="À améliorer">À améliorer</option>
+        </select>
+        
+        <label for="commentaire">Commentaire libre :</label>
+        <textarea id="commentaire" name="commentaire" rows="4"></textarea>
+        
+        <div class="boutons">
+            <button type="submit">Générer</button>
+            <button type="button" id="telecharger">Télécharger</button>
+        </div>
+    </form>
+    
+    <h2>Commentaire généré :</h2>
+    <div id="resultat"></div>
+    
+    <p class="info">Le bouton de téléchargement apparaîtra après la génération d'un commentaire.</p>
+    
+    <script>
+        // Attendre que le document soit chargé
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Document chargé');
+            
+            // Récupérer les éléments du DOM
+            const formulaire = document.getElementById('formulaire');
+            const resultatDiv = document.getElementById('resultat');
+            const boutonTelecharger = document.getElementById('telecharger');
+            
+            // Fonction pour télécharger le commentaire
+            function telechargerCommentaire() {
+                // Récupérer le texte du commentaire
+                const commentaire = resultatDiv.innerText;
+                const prenom = document.getElementById('prenom').value;
+                
+                // Créer un élément a temporaire pour le téléchargement
+                const element = document.createElement('a');
+                element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(commentaire));
+                element.setAttribute('download', `commentaire_${prenom}.txt`);
+                
+                // Cacher l'élément
+                element.style.display = 'none';
+                document.body.appendChild(element);
+                
+                // Simuler un clic
+                element.click();
+                
+                // Supprimer l'élément
+                document.body.removeChild(element);
+            }
+            
+            // Ajouter un gestionnaire d'événement pour le bouton de téléchargement
+            boutonTelecharger.addEventListener('click', telechargerCommentaire);
+            
+            // Ajouter un gestionnaire d'événement pour la soumission du formulaire
+            formulaire.addEventListener('submit', async function(event) {
+                // Empêcher le comportement par défaut du formulaire
+                event.preventDefault();
+                console.log('Formulaire soumis');
+                
+                // Récupérer les valeurs du formulaire
+                const donnees = {
+                    prenom: document.getElementById('prenom').value,
+                    classe: document.getElementById('classe').value,
+                    comportement: document.getElementById('comportement').value,
+                    commentaire: document.getElementById('commentaire').value
+                };
+                console.log('Données:', donnees);
+                
+                // Afficher un message de chargement
+                resultatDiv.innerText = 'Génération en cours...';
+                
+                // Cacher le bouton de téléchargement pendant la génération
+                boutonTelecharger.style.display = 'none';
+                
+                try {
+                    // Envoyer la requête au webhook
+                    const reponse = await fetch('https://n8n.srv765539.hstgr.cloud/webhook-test/générer-commentaire', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(donnees)
+                    });
+                    console.log('Réponse reçue:', reponse);
+                    
+                    // Vérifier si la requête a réussi
+                    if (!reponse.ok) {
+                        throw new Error(`Erreur HTTP: ${reponse.status}`);
+                    }
+                    
+                    // Récupérer les données de la réponse
+                    const resultat = await reponse.json();
+                    console.log('Résultat:', resultat);
+                    
+                    // Afficher le commentaire généré
+                    resultatDiv.innerText = resultat.commentaire || "Aucun commentaire généré";
+                    
+                    // Afficher le bouton de téléchargement
+                    boutonTelecharger.style.display = 'inline-block';
+                } catch (erreur) {
+                    console.error('Erreur:', erreur);
+                    resultatDiv.innerText = `Erreur: ${erreur.message}`;
+                    // Cacher le bouton de téléchargement en cas d'erreur
+                    boutonTelecharger.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
