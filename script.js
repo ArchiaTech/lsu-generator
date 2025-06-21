@@ -1,49 +1,49 @@
-document.obtenirElementById("formulaire").ajouterEventListener("soumettre", asynchrone et => {
-    et.empêcherDefault();
+document.getElementById("formulaire").addEventListener("submit", async function(event) {
+    event.preventDefault();
 
-    constante formulaire = et.cible;
+    const formulaire = event.target;
 
-    constante données = {
-        prénom: formulaire.prénom.valeur,
-        classe: formulaire.classe.valeur,
-        comportement: formulaire.comportement.valeur,
-        commentaire: formulaire.commentaire.valeur,
+    const données = {
+        prénom: formulaire.prénom.value,
+        classe: formulaire.classe.value,
+        comportement: formulaire.comportement.value,
+        commentaire: formulaire.commentaire.value
     };
 
-    essayer {
+    try {
         // Afficher un message de chargement
-        document.obtenirElementById("résultat").Texte intérieur = "Génération en cours...";
+        document.getElementById("résultat").innerText = "Génération en cours...";
         
-        // URL modifiée pour correspondre exactement à celle configurée dans n8n (sans accent)
-        constante réponse = attendre aller chercher("https://n8n.srv765539.hstgr.cloud/webhook-test/generer-commentaire", {
-            méthode: "POST",
-            en-têtes: {
-                "Type de contenu": "application/json"
+        // URL sans accent
+        const réponse = await fetch("https://n8n.srv765539.hstgr.cloud/webhook-test/generer-commentaire", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
             },
-            corps: JSON.chaîne de caractères(données)
+            body: JSON.stringify(données)
         });
 
-        // Vérification explicite du statut de la réponse
-        console.log("Statut de la réponse:", réponse.statut);
+        // Vérification du statut
+        console.log("Statut de la réponse:", réponse.status);
         
-        si (!réponse.d'accord) {
-            lancer nouveau Erreur(`Erreur HTTP: ${réponse.statut}`);
+        if (!réponse.ok) {
+            throw new Error(`Erreur HTTP: ${réponse.status}`);
         }
 
-        constante résultat = attendre réponse.json();
+        const résultat = await réponse.json();
         
-        // Logs pour comprendre la structure de la réponse
-        console.log("Résultat complet reçu:", résultat);
+        // Log pour le débogage
+        console.log("Résultat complet:", résultat);
 
-        // Vérification de l'existence de la propriété commentaire
-        si (résultat && résultat.commentaire !== undefined) {
-            document.obtenirElementById("résultat").Texte intérieur = résultat.commentaire;
+        // Vérification de la propriété commentaire
+        if (résultat && résultat.commentaire !== undefined) {
+            document.getElementById("résultat").innerText = résultat.commentaire;
         } else {
-            console.erreur("La propriété commentaire est manquante dans:", résultat);
-            document.obtenirElementById("résultat").Texte intérieur = "Erreur: Commentaire non trouvé dans la réponse";
+            console.error("La propriété commentaire est manquante:", résultat);
+            document.getElementById("résultat").innerText = "Erreur: Commentaire non trouvé dans la réponse";
         }
-    } attraper (erreur) {
-        console.erreur("Erreur lors de l'appel au webhook:", erreur);
-        document.obtenirElementById("résultat").Texte intérieur = "Erreur : " + erreur.message;
+    } catch (erreur) {
+        console.error("Erreur lors de l'appel au webhook:", erreur);
+        document.getElementById("résultat").innerText = "Erreur : " + erreur.message;
     }
 });
