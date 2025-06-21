@@ -1,35 +1,36 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Générateur de Commentaires LSU</title>
-  <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8">
+    <title>Générateur de Commentaires LSU</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>Générateur de Commentaires LSU</h1>
-  <form id="formulaire">
-    <label>Prénom :</label>
-    <input type="text" name="prenom" required><br>
-
-    <label>Classe :</label>
-    <input type="text" name="classe" required><br>
-
-    <label>Comportement :</label>
-    <select name="comportement" required>
-      <option value="Très bon">Très bon</option>
-      <option value="Bon">Bon</option>
-      <option value="À améliorer">À améliorer</option>
-    </select><br>
-
-    <label>Commentaire libre :</label><br>
-    <textarea name="commentaire" rows="4"></textarea><br>
-
-    <button type="submit">Générer</button>
-  </form>
-
-  <h2>Commentaire généré :</h2>
-  <div id="resultat"></div>
-
-  <script src="script.js"></script>
+    <h1>Générateur de Commentaires LSU</h1>
+    
+    <form id="formulaire">
+        <label for="prenom">Prénom :</label>
+        <input type="text" id="prenom" name="prenom" required>
+        
+        <label for="classe">Classe :</label>
+        <input type="text" id="classe" name="classe" required>
+        
+        <label for="comportement">Comportement :</label>
+        <select id="comportement" name="comportement" required>
+            <option value="Très bon">Très bon</option>
+            <option value="Bon">Bon</option>
+            <option value="À améliorer">À améliorer</option>
+        </select>
+        
+        <label for="commentaire">Commentaire libre :</label>
+        <textarea id="commentaire" name="commentaire" rows="4"></textarea>
+        
+        <button type="submit">Générer</button>
+    </form>
+    
+    <h2>Commentaire généré :</h2>
+    <div id="resultat"></div>
+    
+    <script src="script.js"></script>
 </body>
 </html>
