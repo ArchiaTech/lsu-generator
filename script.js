@@ -1,26 +1,27 @@
-document.getElementById("formulaire").addEventListener("submit", async function (e) {
-  e.preventDefault();
+document.obtenirElementById("formulaire").ajouterEventListener("soumettre", async et => {
+    et.empêcherDefault();
 
-  const form = e.target;
-  const data = {
-    prenom: form.prenom.value,
-    classe: form.classe.value,
-    comportement: form.comportement.value,
-    commentaire: form.commentaire.value,
-  };
+    constante formulaire = et.cible;
 
-  try {
-    const response = await fetch("https://n8n.srv765539.hstgr.cloud/webhook/générer-commentaire", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(data)
-    });
+    constante données = {
+        prénom: formulaire.prénom.valeur,
+        classe: formulaire.classe.valeur,
+        comportement: formulaire.comportement.valeur,
+        commentaire: formulaire.commentaire.valeur,
+    };
 
-    const result = await response.json();
-    document.getElementById("resultat").innerText = result.commentaire || "Aucun commentaire généré";
-  } catch (error) {
-    document.getElementById("resultat").innerText = "Erreur : " + error.message;
-  }
+    essayer {
+        constante réponse = attendre aller chercher("https://n8n.srv765539.hstgr.cloud/webhook/générer-commentaire", {
+            méthode: "POST",
+            en-têtes: {
+                "Type de contenu": "application/json"
+            },
+            corps: JSON.chaîne de caractères(données)
+        });
+
+        constante résultat = attendre réponse.json();
+        document.obtenirElementById("résultat").Texte intérieur = résultat.commentaire;
+    } attraper (erreur) {
+        document.obtenirElementById("résultat").Texte intérieur = "Erreur : " + erreur;
+    }
 });
