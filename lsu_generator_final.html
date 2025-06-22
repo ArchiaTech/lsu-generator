@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎓 Générateur de Commentaires LSU</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            background: #27ae60;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+        }
+        
+        @media (max-width: 968px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .form-section {
+            padding: 40px;
+            border-right: 1px solid #e1e8ed;
+        }
+        
+        @media (max-width: 968px) {
+            .form-section {
+                border-right: none;
+                border-bottom: 1px solid #e1e8ed;
+            }
+        }
+        
+        .result-section {
+            padding: 40px;
+            background: #f8f9fa;
+        }
+        
+        .section-title {
+            color: #2c3e50;
+            font-size: 1.5em;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 1em;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+        
+        textarea {
+            height: 120px;
+            resize: vertical;
+        }
+        
+        .model-selection {
+            background: #ecf0f1;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+        
+        .model-selection h4 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        
+        .model-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        
+        .model-option:hover {
+            background: #f0f0f0;
+        }
+        
+        .model-option input[type="radio"] {
+            width: auto;
+            margin-right: 10px;
+            transform: none;
+        }
+        
+        .model-description {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            margin-left: 25px;
+        }
+        
+        .generate-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 18px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .generate-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .generate-btn:hover::before {
+            left: 100%;
+        }
+        
+        .generate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .generate-btn:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .result-container {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .result-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .result-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #2c3e50;
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+        
+        .result-content {
+            font-size: 16px;
+            line-height: 1.7;
+            color: #34495e;
+            min-height: 120px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 2px dashed #e1e8ed;
+            transition: all 0.3s ease;
+        }
+        
+        .result-content.has-content {
+            border: 2px solid #27ae60;
+            background: #d4edda;
+        }
+        
+        .loading {
+            color: #667eea;
+            font-style: italic;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .loading::before {
+            content: '';
+            width: 20px;
+            height: 20px;
+            border: 2px solid #667eea;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error {
+            color: #e74c3c;
+            font-weight: 600;
+            padding: 20px;
+            background: #ffeaea;
+            border-radius: 10px;
+            border-left: 4px solid #e74c3c;
+        }
+        
+        .success {
+            animation: slideIn 0.5s ease-out;
+            font-weight: 500;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .action-btn {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .copy-btn {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .copy-btn:hover {
+            background: #229954;
+            transform: translateY(-2px);
+        }
+        
+        .regenerate-btn {
+            background: #f39c12;
+            color: white;
+        }
+        
+        .regenerate-btn:hover {
+            background: #e67e22;
+            transform: translateY(-2px);
+        }
+        
+        .clear-btn {
+            background: #95a5a6;
+            color: white;
+        }
+        
+        .clear-btn:hover {
+            background: #7f8c8d;
+        }
+        
+        .metadata {
+            margin-top: 15px;
+            padding: 15px;
+            background: #ecf0f1;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #7f8c8d;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+        }
+        
+        .metadata-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .examples-section {
+            margin-top: 30px;
+            padding: 25px;
+            background: #e8f4fd;
+            border-radius: 15px;
+            border-left: 5px solid #3498db;
+        }
+        
+        .examples-title {
+            color: #2c3e50;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .example-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+        
+        .example-btn {
+            padding: 12px 15px;
+            background: white;
+            border: 2px solid #3498db;
+            color: #3498db;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            text-align: left;
+        }
+        
+        .example-btn:hover {
+            background: #3498db;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #27ae60;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-weight: 600;
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <h1>🎓 Générateur de Commentaires LSU</h1>
+                <p>Assistant IA pour la rédaction de commentaires personnalisés</p>
+                <p>Système intelligent multi-modèles avec fallback automatique</p>
+                <div class="status-badge" id="status-badge">
+                    ✅ Système opérationnel
+                </div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="form-section">
+                <h2 class="section-title">
+                    <span>📝</span> Informations sur l'élève
+                </h2>
+                
+                <form id="commentaire-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="prenom">👤 Prénom de l'élève</label>
+                            <input type="text" id="prenom" name="prenom" placeholder="Ex: Marie, Paul, Sophie..." required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="classe">📚 Classe / Niveau</label>
+                            <select id="classe" name="classe" required>
+                                <option value="">Sélectionnez un niveau</option>
+                                <option value="CP">CP</option>
+                                <option value="CE1">CE1</option>
+                                <option value="CE2">CE2</option>
+                                <option value="CM1">CM1</option>
+                                <option value="CM2">CM2</option>
+                                <option value="6ème">6ème</option>
+                                <option value="5ème">5ème</option>
+                                <option value="4ème">4ème</option>
+                                <option value="3ème">3ème</option>
+                                <option value="2nde">2nde</option>
+                                <option value="1ère">1ère</option>
+                                <option value="Terminale">Terminale</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="comportement">😊 Comportement général</label>
+                            <select id="comportement" name="comportement">
+                                <option value="Excellent">Excellent</option>
+                                <option value="Très bon">Très bon</option>
+                                <option value="Bon" selected>Bon</option>
+                                <option value="Satisfaisant">Satisfaisant</option>
+                                <option value="À améliorer">À améliorer</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="matiere">📖 Matière principale</label>
+                            <select id="matiere" name="matiere">
+                                <option value="Français">Français</option>
+                                <option value="Mathématiques">Mathématiques</option>
+                                <option value="Histoire-Géographie">Histoire-Géographie</option>
+                                <option value="Sciences">Sciences</option>
+                                <option value="Anglais">Anglais</option>
+                                <option value="EPS">EPS</option>
+                                <option value="Arts plastiques">Arts plastiques</option>
+                                <option value="Musique">Musique</option>
+                                <option value="Général" selected>Général</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="commentaire-libre">✍️ Observations et détails spécifiques</label>
+                        <textarea id="commentaire-libre" name="commentaire-libre" placeholder="Décrivez les points forts, les difficultés, les progrès observés, la participation en classe, les projets réalisés..."></textarea>
+                    </div>
+                    
+                    <div class="model-selection">
+                        <h4>🤖 Mode de génération :</h4>
+                        <div class="model-option">
+                            <input type="radio" id="mode-intelligent" name="generation-mode" value="intelligent" checked>
+                            <label for="mode-intelligent">🧠 Intelligent (Système IA + Templates)</label>
+                        </div>
+                        <div class="model-description">Utilise l'IA avec fallback sur templates intelligents</div>
+                        
+                        <div class="model-option">
+                            <input type="radio" id="mode-template" name="generation-mode" value="template">
+                            <label for="mode-template">📝 Templates uniquement (Instantané)</label>
+                        </div>
+                        <div class="model-description">Génération basée sur des modèles prédéfinis</div>
+                    </div>
+                    
+                    <button type="button" id="generer" class="generate-btn">
+                        🚀 Générer le commentaire
+                    </button>
+                </form>
+                
+                <div class="examples-section">
+                    <h3 class="examples-title">
+                        <span>💡</span> Exemples rapides
+                    </h3>
+                    <div class="example-buttons">
+                        <button class="example-btn" onclick="loadExample('thomas')">
+                            <strong>Thomas - CE2</strong><br>
+                            Bon élève, difficultés en maths
+                        </button>
+                        <button class="example-btn" onclick="loadExample('sophie')">
+                            <strong>Sophie - CM2</strong><br>
+                            Excellente élève
+                        </button>
+                        <button class="example-btn" onclick="loadExample('marie')">
+                            <strong>Marie - CM1</strong><br>
+                            Quelques difficultés
+                        </button>
+                        <button class="example-btn" onclick="loadExample('lucas')">
+                            <strong>Lucas - 3ème</strong><br>
+                            À améliorer
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="result-section">
+                <h2 class="section-title">
+                    <span>📋</span> Commentaire généré
+                </h2>
+                
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-number" id="stat-generated">0</div>
+                        <div class="stat-label">Générés</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="stat-success">0</div>
+                        <div class="stat-label">Réussis</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="stat-words">0</div>
+                        <div class="stat-label">Mots</div>
+                    </div>
+                </div>
+                
+                <div class="result-container">
+                    <div class="result-header">
+                        <div class="result-title">
+                            <span>📝</span>
+                            <span>Commentaire LSU</span>
+                        </div>
+                    </div>
+                    <div class="result-content" id="resultat">
+                        Remplissez le formulaire et cliquez sur "Générer le commentaire" pour commencer...
+                    </div>
+                    
+                    <div class="action-buttons" style="display: none;" id="action-buttons">
+                        <button class="action-btn copy-btn" id="copy-btn">
+                            📋 Copier
+                        </button>
+                        <button class="action-btn regenerate-btn" id="regenerate-btn">
+                            🔄 Régénérer
+                        </button>
+                        <button class="action-btn clear-btn" id="clear-btn">
+                            🗑️ Effacer
+                        </button>
+                    </div>
+                    
+                    <div class="metadata" style="display: none;" id="metadata">
+                        <div class="metadata-item">
+                            <span>🤖</span>
+                            <span id="meta-model">Modèle: -</span>
+                        </div>
+                        <div class="metadata-item">
+                            <span>📊</span>
+                            <span id="meta-tokens">Tokens: -</span>
+                        </div>
+                        <div class="metadata-item">
+                            <span>⏱️</span>
+                            <span id="meta-time">Temps: -</span>
+                        </div>
+                        <div class="metadata-item">
+                            <span>🎯</span>
+                            <span id="meta-method">Méthode: -</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="notification" id="notification">
+        ✅ Commentaire copié dans le presse-papiers !
+    </div>
+
+    <script>
+        // Configuration
+        const WEBHOOK_URL = 'https://n8n.srv765539.hstgr.cloud/webhook/generer-commentaire';
+        
+        // Variables globales
+        let stats = {
+            generated: 0,
+            success: 0,
+            totalWords: 0
+        };
+        
+        // Éléments DOM
+        const elements = {
+            form: document.getElementById('commentaire-form'),
+            generateBtn: document.getElementById('generer'),
+            resultDiv: document.getElementById('resultat'),
+            actionButtons: document.getElementById('action-buttons'),
+            metadata: document.getElementById('metadata'),
+            notification: document.getElementById('notification')
+        };
+        
+        // Initialisation
+        window.addEventListener('load', async () => {
+            loadStats();
+            testConnection();
+        });
+        
+        // Test de connexion
+        async function testConnection() {
+            try {
+                const response = await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: "test connexion" })
+                });
+                
+                const statusBadge = document.getElementById('status-badge');
+                if (response.ok) {
+                    statusBadge.textContent = '✅ Système opérationnel';
+                    statusBadge.style.background = '#27ae60';
+                } else {
+                    statusBadge.textContent = '⚠️ Connexion limitée';
+                    statusBadge.style.background = '#f39c12';
+                }
+            } catch (error) {
+                const statusBadge = document.getElementById('status-badge');
+                statusBadge.textContent = '❌ Hors ligne';
+                statusBadge.style.background = '#e74c3c';
+            }
+        }
+        
+        // Chargement des exemples
+        function loadExample(type) {
+            const examples = {
+                thomas: {
+                    prenom: 'Thomas',
+                    classe: 'CE2',
+                    comportement: 'Bon',
+                    matiere: 'Mathématiques',
+                    commentaire: 'Thomas est un élève travailleur qui participe bien en classe. Il montre de bonnes capacités en français et lecture. En mathématiques, quelques difficultés persistent en géométrie mais ses efforts sont constants et remarquables.'
+                },
+                sophie: {
+                    prenom: 'Sophie',
+                    classe: 'CM2',
+                    comportement: 'Excellent',
+                    matiere: 'Général',
+                    commentaire: 'Sophie est une élève remarquable qui excelle dans toutes les matières. Elle fait preuve d\'autonomie, d\'un excellent comportement et d\'un esprit d\'entraide très apprécié.'
+                },
+                marie: {
+                    prenom: 'Marie',
+                    classe: 'CM1',
+                    comportement: 'Satisfaisant',
+                    matiere: 'Français',
+                    commentaire: 'Marie est attentive et participe bien en classe. Quelques difficultés en géométrie mais ses efforts en français sont remarquables. Sa participation orale est excellente.'
+                },
+                lucas: {
+                    prenom: 'Lucas',
+                    classe: '3ème',
+                    comportement: 'À améliorer',
+                    matiere: 'Général',
+                    commentaire: 'Lucas peut mieux faire. Il doit s\'investir davantage dans son travail et améliorer son comportement. Avec plus d\'efforts et de concentration, de nets progrès sont possibles.'
+                }
+            };
+            
+            const example = examples[type];
+            if (example) {
+                document.getElementById('prenom').value = example.prenom;
+                document.getElementById('classe').value = example.classe;
+                document.getElementById('comportement').value = example.comportement;
+                document.getElementById('matiere').value = example.matiere;
+                document.getElementById('commentaire-libre').value = example.commentaire;
+            }
+        }
+        
+        // Générateur de commentaire principal
+        elements.generateBtn.addEventListener('click', async function() {
+            const startTime = Date.now();
+            const formData = getFormData();
+            
+            if (!validateForm(formData)) return;
+            
+            setLoadingState(true);
+            updateStats('generated');
+            
+            try {
+                const result = await generateComment(formData);
+                displayResult(result, Date.now() - startTime);
+                updateStats('success');
+                updateStats('words', countWords(result.commentaire));
+            } catch (error) {
+                displayError(error);
+            } finally {
+                setLoadingState(false);
+            }
+        });
+        
+        // Récupération des données du formulaire
+        function getFormData() {
+            return {
+                prenom: document.getElementById('prenom').value.trim(),
+                classe: document.getElementById('classe').value,
+                comportement: document.getElementById('comportement').value,
+                matiere: document.getElementById('matiere').value,
+                commentaireLibre: document.getElementById('commentaire-libre').value.trim(),
+                mode: document.querySelector('input[name="generation-mode"]:checked').value
+            };
+        }
+        
+        // Validation du formulaire
+        function validateForm(data) {
+            if (!data.prenom || !data.classe) {
+                showNotification('⚠️ Veuillez remplir au moins le prénom et la classe', 'warning');
+                return false;
+            }
+            return true;
+        }
+        
+        // Génération du commentaire
+        async function generateComment(data) {
+            const prompt = buildPrompt(data);
+            
+            const requestData = {
+                prompt: prompt,
+                studentName: data.prenom,
+                niveau: data.classe,
+                comportement: data.comportement,
+                matiere: data.matiere,
+                mode: data.mode
+            };
+            
+            const response = await fetch(WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(requestData)
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Erreur HTTP: ${response.status} - ${response.statusText}`);
+            }
+            
+            const result = await response.json();
+            
+            if (!result || !result.success || !result.commentaire) {
+                throw new Error('Format de réponse inattendu');
+            }
+            
+            return result;
+        }
+        
+        // Construction du prompt
+        function buildPrompt(data) {
+            let prompt = `${data.prenom}, élève de ${data.classe}, comportement: ${data.comportement}`;
+            
+            if (data.matiere !== 'Général') {
+                prompt += `, matière principale: ${data.matiere}`;
+            }
+            
+            if (data.commentaireLibre) {
+                prompt += `. Observations: ${data.commentaireLibre}`;
+            }
+            
+            return prompt;
+        }
+        
+        // État de chargement
+        function setLoadingState(loading) {
+            elements.generateBtn.disabled = loading;
+            elements.generateBtn.textContent = loading ? '⏳ Génération en cours...' : '🚀 Générer le commentaire';
+            
+            if (loading) {
+                elements.resultDiv.innerHTML = '<div class="loading">Génération du commentaire personnalisé...</div>';
+                elements.actionButtons.style.display = 'none';
+                elements.metadata.style.display = 'none';
+            }
+        }
+        
+        // Affichage du résultat
+        function displayResult(result, duration) {
+            elements.resultDiv.innerHTML = `<div class="success">${result.commentaire}</div>`;
+            elements.resultDiv.classList.add('has-content');
+            elements.actionButtons.style.display = 'flex';
+            elements.metadata.style.display = 'grid';
+            
+            // Mise à jour des métadonnées
+            document.getElementById('meta-model').textContent = `Modèle: ${result.metadata?.model || 'N/A'}`;
+            document.getElementById('meta-tokens').textContent = `Tokens: ${result.metadata?.tokens || 'N/A'}`;
+            document.getElementById('meta-time').textContent = `Temps: ${duration}ms`;
+            document.getElementById('meta-method').textContent = `Méthode: ${result.metadata?.method || 'IA'}`;
+        }
+        
+        // Affichage d'erreur
+        function displayError(error) {
+            elements.resultDiv.innerHTML = `<div class="error">❌ Erreur: ${error.message}<br><br>Vérifiez la connexion réseau et réessayez.</div>`;
+            elements.resultDiv.classList.remove('has-content');
+            elements.actionButtons.style.display = 'none';
+            elements.metadata.style.display = 'none';
+        }
+        
+        // Gestion des statistiques
+        function updateStats(type, value = 1) {
+            stats[type] += value;
+            saveStats();
+            displayStats();
+        }
+        
+        function displayStats() {
+            document.getElementById('stat-generated').textContent = stats.generated;
+            document.getElementById('stat-success').textContent = stats.success;
+            document.getElementById('stat-words').textContent = stats.totalWords;
+        }
+        
+        function loadStats() {
+            const saved = localStorage.getItem('lsu-stats');
+            if (saved) {
+                stats = { ...stats, ...JSON.parse(saved) };
+            }
+            displayStats();
+        }
+        
+        function saveStats() {
+            localStorage.setItem('lsu-stats', JSON.stringify(stats));
+        }
+        
+        // Utilitaires
+        function countWords(text) {
+            return text.trim().split(/\s+/).length;
+        }
+        
+        function showNotification(message, type = 'success') {
+            elements.notification.textContent = message;
+            elements.notification.className = `notification ${type}`;
+            elements.notification.classList.add('show');
+            
+            setTimeout(() => {
+                elements.notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Actions sur le résultat
+        document.getElementById('copy-btn').addEventListener('click', async function() {
+            const commentaire = elements.resultDiv.querySelector('.success')?.textContent;
+            if (commentaire) {
+                try {
+                    await navigator.clipboard.writeText(commentaire);
+                    showNotification('📋 Commentaire copié dans le presse-papiers !');
+                    this.textContent = '✅ Copié !';
+                    setTimeout(() => {
+                        this.textContent = '📋 Copier';
+                    }, 2000);
+                } catch (error) {
+                    // Fallback pour navigateurs anciens
+                    const textArea = document.createElement('textarea');
+                    textArea.value = commentaire;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    showNotification('📋 Commentaire copié !');
+                }
+            }
+        });
+        
+        document.getElementById('regenerate-btn').addEventListener('click', function() {
+            elements.generateBtn.click();
+        });
+        
+        document.getElementById('clear-btn').addEventListener('click', function() {
+            elements.resultDiv.innerHTML = 'Remplissez le formulaire et cliquez sur "Générer le commentaire" pour commencer...';
+            elements.resultDiv.classList.remove('has-content');
+            elements.actionButtons.style.display = 'none';
+            elements.metadata.style.display = 'none';
+        });
+        
+        // Raccourcis clavier
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                e.preventDefault();
+                elements.generateBtn.click();
+            }
+            
+            if (e.ctrlKey && e.key === 'e') {
+                e.preventDefault();
+                loadExample('thomas');
+            }
+            
+            if (e.ctrlKey && e.key === 'c' && elements.resultDiv.querySelector('.success')) {
+                e.preventDefault();
+                document.getElementById('copy-btn').click();
+            }
+        });
+        
+        // Auto-complétion intelligente
+        document.getElementById('prenom').addEventListener('input', function() {
+            const prenom = this.value.toLowerCase();
+            const suggestions = {
+                'thomas': 'CE2',
+                'sophie': 'CM2',
+                'marie': 'CM1',
+                'lucas': '3ème',
+                'emma': 'CP',
+                'léo': 'CE1',
+                'chloé': '6ème',
+                'hugo': '5ème'
+            };
+            
+            if (suggestions[prenom] && !document.getElementById('classe').value) {
+                document.getElementById('classe').value = suggestions[prenom];
+            }
+        });
+        
+        // Animation d'entrée
+        setTimeout(() => {
+            document.querySelector('.container').style.animation = 'slideIn 0.8s ease-out';
+        }, 100);
+        
+        // Sauvegarde automatique du formulaire
+        function saveFormData() {
+            const formData = getFormData();
+            localStorage.setItem('lsu-form-data', JSON.stringify(formData));
+        }
+        
+        function loadFormData() {
+            const saved = localStorage.getItem('lsu-form-data');
+            if (saved) {
+                const data = JSON.parse(saved);
+                if (data.prenom) document.getElementById('prenom').value = data.prenom;
+                if (data.classe) document.getElementById('classe').value = data.classe;
+                if (data.comportement) document.getElementById('comportement').value = data.comportement;
+                if (data.matiere) document.getElementById('matiere').value = data.matiere;
+                if (data.commentaireLibre) document.getElementById('commentaire-libre').value = data.commentaireLibre;
+            }
+        }
+        
+        // Sauvegarde à chaque modification
+        ['prenom', 'classe', 'comportement', 'matiere', 'commentaire-libre'].forEach(id => {
+            document.getElementById(id).addEventListener('change', saveFormData);
+        });
+        
+        // Chargement des données sauvegardées
+        loadFormData();
+        
+        // Instructions d'aide
+        console.log(`
+🎓 GÉNÉRATEUR LSU - RACCOURCIS CLAVIER
+=====================================
+Ctrl + Enter : Générer un commentaire
+Ctrl + E     : Charger l'exemple Thomas
+Ctrl + C     : Copier le résultat (si affiché)
+
+💡 EXEMPLES RAPIDES
+==================
+Cliquez sur les boutons d'exemple ou utilisez Ctrl+E
+
+📊 STATISTIQUES
+===============
+Vos statistiques sont sauvegardées localement
+
+🔧 MODES DE GÉNÉRATION
+======================
+• Intelligent : IA + Templates (recommandé)
+• Templates uniquement : Génération instantanée
+
+✨ FONCTIONNALITÉS
+==================
+• Auto-complétion intelligente
+• Sauvegarde automatique du formulaire
+• Statistiques d'utilisation
+• Métadonnées détaillées
+• Copie en un clic
+        `);
+    </script>
+</body>
+</html>
