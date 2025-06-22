@@ -574,6 +574,18 @@
                         <div class="model-description">Génération basée sur des modèles prédéfinis</div>
                     </div>
                     
+                    <div class="model-selection" style="margin-top: -10px; border-top: 1px solid #eee; padding-top: 20px;">
+                        <h4>🧠 Choix de l'IA (si mode intelligent)</h4>
+                        <div class="model-option">
+                            <input type="radio" id="ia-generative" name="ia-mode" value="gpt" checked>
+                            <label for="ia-generative">IA-Générative</label>
+                        </div>
+                        <div class="model-option">
+                            <input type="radio" id="ia-locale" name="ia-mode" value="fallback">
+                            <label for="ia-locale">IA Locale</label>
+                        </div>
+                    </div>
+                    
                     <button type="button" id="generer" class="generate-btn">
                         🚀 Générer le commentaire
                     </button>
@@ -798,7 +810,8 @@
                 comportement: document.getElementById('comportement').value,
                 matiere: document.getElementById('matiere').value,
                 commentaireLibre: document.getElementById('commentaire-libre').value.trim(),
-                mode: document.querySelector('input[name="generation-mode"]:checked').value
+                mode: document.querySelector('input[name="generation-mode"]:checked').value,
+                modeIA: document.querySelector('input[name="ia-mode"]:checked').value
             };
         }
         
@@ -821,7 +834,8 @@
                 niveau: data.classe,
                 comportement: data.comportement,
                 matiere: data.matiere,
-                mode: data.mode
+                mode: data.mode,
+                modeIA: data.modeIA
             };
             
             const response = await fetch(WEBHOOK_URL, {
@@ -878,10 +892,15 @@
             elements.metadata.style.display = 'grid';
             
             // Mise à jour des métadonnées
+            const rawMethod = result.metadata?.method || 'IA';
+            let displayMethod = rawMethod;
+            if (rawMethod.toLowerCase() === 'gpt') displayMethod = 'GPT';
+            if (rawMethod.toLowerCase() === 'fallback') displayMethod = 'Fallback';
+
             document.getElementById('meta-model').textContent = `Modèle: ${result.metadata?.model || 'N/A'}`;
             document.getElementById('meta-tokens').textContent = `Tokens: ${result.metadata?.tokens || 'N/A'}`;
             document.getElementById('meta-time').textContent = `Temps: ${duration}ms`;
-            document.getElementById('meta-method').textContent = `Méthode: ${result.metadata?.method || 'IA'}`;
+            document.getElementById('meta-method').textContent = `Méthode: ${displayMethod}`;
         }
         
         // Affichage d'erreur
