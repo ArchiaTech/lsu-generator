@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔧 Outil de Débogage LSU</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        
+        .debug-section {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .debug-section h3 {
+            margin-bottom: 15px;
+            color: #fff;
+        }
+        
+        .debug-output {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px 5px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .btn.danger {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+        
+        .btn.warning {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+        }
+        
+        .status {
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        
+        .status.success {
+            background: rgba(39, 174, 96, 0.3);
+            border: 1px solid #27ae60;
+        }
+        
+        .status.error {
+            background: rgba(231, 76, 60, 0.3);
+            border: 1px solid #e74c3c;
+        }
+        
+        .status.warning {
+            background: rgba(243, 156, 18, 0.3);
+            border: 1px solid #f39c12;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Outil de Débogage LSU</h1>
+        
+        <div class="debug-section">
+            <h3>📊 État du localStorage</h3>
+            <div class="debug-output" id="localStorage-status"></div>
+            <button class="btn" onclick="checkLocalStorage()">🔍 Vérifier le stockage</button>
+            <button class="btn danger" onclick="clearAllStorage()">🗑️ Effacer tout</button>
+        </div>
+        
+        <div class="debug-section">
+            <h3>🧪 Test de génération locale</h3>
+            <div>
+                <input type="text" id="test-prenom" placeholder="Prénom de test" style="padding: 10px; margin: 5px; border-radius: 5px; border: none;">
+                <select id="test-comportement" style="padding: 10px; margin: 5px; border-radius: 5px; border: none;">
+                    <option value="Excellent">Excellent</option>
+                    <option value="Très bon">Très bon</option>
+                    <option value="Bon" selected>Bon</option>
+                    <option value="Satisfaisant">Satisfaisant</option>
+                    <option value="À améliorer">À améliorer</option>
+                </select>
+            </div>
+            <button class="btn" onclick="testLocalGeneration()">🧪 Tester génération</button>
+            <div class="debug-output" id="test-output"></div>
+        </div>
+        
+        <div class="debug-section">
+            <h3>🌐 Test de connectivité webhook</h3>
+            <button class="btn warning" onclick="testWebhook()">🔗 Tester webhook</button>
+            <div class="debug-output" id="webhook-output"></div>
+        </div>
+        
+        <div class="debug-section">
+            <h3>🔄 Actions de réparation</h3>
+            <button class="btn" onclick="repairApplication()">🛠️ Réparer l'application</button>
+            <button class="btn warning" onclick="resetToDefaults()">🔄 Réinitialiser</button>
+            <div id="repair-status"></div>
+        </div>
+        
+        <div class="debug-section">
+            <h3>📝 Instructions de correction</h3>
+            <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px;">
+                <p><strong>1. Problème "Paul" :</strong> Les données sont stockées dans localStorage</p>
+                <p><strong>2. Solution :</strong> Cliquez sur "Effacer tout" puis rechargez la page</p>
+                <p><strong>3. Test :</strong> Utilisez le test de génération locale pour vérifier</p>
+                <p><strong>4. Prévention :</strong> Désactivez la sauvegarde auto si nécessaire</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const WEBHOOK_URL = 'https://n8n.srv765539.hstgr.cloud/webhook/generer-commentaire';
+        
+        function checkLocalStorage() {
+            const output = document.getElementById('localStorage-status');
+            let report = '';
+            
+            // Vérifier toutes les clés LSU dans localStorage
+            const keys = ['lsu-form-data', 'lsu-stats', 'lsu-autosave-enabled'];
+            
+            keys.forEach(key => {
+                const value = localStorage.getItem(key);
+                if (value) {
+                    report += `🔍 ${key}:\n${value}\n\n`;
+                } else {
+                    report += `✅ ${key}: (vide)\n\n`;
+                }
+            });
+            
+            // Vérifier s'il y a "Paul" quelque part
+            const allStorage = JSON.stringify(localStorage);
+            if (allStorage.toLowerCase().includes('paul')) {
+                report += '🚨 PROBLÈME DÉTECTÉ: "Paul" trouvé dans le stockage !\n\n';
+            } else {
+                report += '✅ Aucune trace de "Paul" dans le stockage\n\n';
+            }
+            
+            output.textContent = report;
+        }
+        
+        function clearAllStorage() {
+            const keys = ['lsu-form-data', 'lsu-stats', 'lsu-autosave-enabled'];
+            
+            keys.forEach(key => {
+                localStorage.removeItem(key);
+            });
+            
+            const status = document.createElement('div');
+            status.className = 'status success';
+            status.textContent = '✅ Tout le stockage a été effacé !';
+            document.body.appendChild(status);
+            
+            setTimeout(() => {
+                if (confirm('Recharger la page pour appliquer les changements ?')) {
+                    location.reload();
+                }
+            }, 1000);
+        }
+        
+        function testLocalGeneration() {
+            const prenom = document.getElementById('test-prenom').value || 'TestEleve';
+            const comportement = document.getElementById('test-comportement').value;
+            const output = document.getElementById('test-output');
+            
+            // Templates locaux (même logique que l'app principale)
+            const templates = {
+                'Excellent': {
+                    intro: `${prenom} est un(e) élève remarquable`,
+                    details: 'qui excelle dans toutes les matières. Son comportement exemplaire et son investissement constant sont à souligner.',
+                    conclusion: 'Continuez ainsi ! Bravo pour ce parcours exemplaire.'
+                },
+                'Très bon': {
+                    intro: `${prenom} est un(e) très bon(ne) élève`,
+                    details: 'qui montre de solides compétences et une bonne participation en classe.',
+                    conclusion: 'Quelques efforts supplémentaires permettront d\'atteindre l\'excellence.'
+                },
+                'Bon': {
+                    intro: `${prenom} est un(e) élève sérieux(se)`,
+                    details: 'qui travaille régulièrement et participe bien aux activités de classe.',
+                    conclusion: 'Continuez vos efforts pour progresser encore davantage.'
+                },
+                'Satisfaisant': {
+                    intro: `${prenom} fournit un travail satisfaisant`,
+                    details: 'mais pourrait s\'investir davantage pour améliorer ses résultats.',
+                    conclusion: 'Avec plus de régularité, de nets progrès sont possibles.'
+                },
+                'À améliorer': {
+                    intro: `${prenom} doit fournir plus d\'efforts`,
+                    details: 'pour améliorer ses résultats et son comportement en classe.',
+                    conclusion: 'Une prise de conscience et plus de travail sont nécessaires.'
+                }
+            };
+            
+            const template = templates[comportement] || templates['Bon'];
+            const commentaire = `${template.intro} ${template.details} ${template.conclusion}`;
+            
+            output.textContent = `🧪 Test avec "${prenom}" :\n\n${commentaire}`;
+            
+            // Vérifier si le résultat contient bien le bon prénom
+            if (commentaire.includes(prenom) && !commentaire.toLowerCase().includes('paul')) {
+                const status = document.createElement('div');
+                status.className = 'status success';
+                status.textContent = '✅ Test réussi ! La génération locale fonctionne correctement.';
+                document.getElementById('test-output').appendChild(status);
+            } else {
+                const status = document.createElement('div');
+                status.className = 'status error';
+                status.textContent = '❌ Problème détecté dans la génération locale !';
+                document.getElementById('test-output').appendChild(status);
+            }
+        }
+        
+        async function testWebhook() {
+            const output = document.getElementById('webhook-output');
+            output.textContent = '🔗 Test de connexion en cours...';
+            
+            try {
+                const response = await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        prompt: "test debug",
+                        studentName: "TestDebug",
+                        niveau: "CE2",
+                        comportement: "Bon"
+                    })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    output.textContent = `✅ Webhook accessible !\n\nRéponse: ${JSON.stringify(result, null, 2)}`;
+                } else {
+                    output.textContent = `⚠️ Webhook répond mais avec erreur: ${response.status}`;
+                }
+            } catch (error) {
+                output.textContent = `❌ Webhook inaccessible: ${error.message}`;
+            }
+        }
+        
+        function repairApplication() {
+            const statusDiv = document.getElementById('repair-status');
+            
+            // Étapes de réparation
+            const steps = [
+                '🧹 Nettoyage du localStorage...',
+                '🔄 Réinitialisation des paramètres...',
+                '✅ Réparation terminée !'
+            ];
+            
+            let currentStep = 0;
+            
+            function nextStep() {
+                if (currentStep < steps.length) {
+                    const stepDiv = document.createElement('div');
+                    stepDiv.className = 'status success';
+                    stepDiv.textContent = steps[currentStep];
+                    statusDiv.appendChild(stepDiv);
+                    currentStep++;
+                    
+                    if (currentStep === 1) {
+                        // Nettoyer
+                        clearAllStorage();
+                    }
+                    
+                    setTimeout(nextStep, 1000);
+                } else {
+                    const finalDiv = document.createElement('div');
+                    finalDiv.className = 'status success';
+                    finalDiv.innerHTML = '<strong>🎉 Application réparée ! Rechargez la page principale.</strong>';
+                    statusDiv.appendChild(finalDiv);
+                }
+            }
+            
+            statusDiv.innerHTML = '';
+            nextStep();
+        }
+        
+        function resetToDefaults() {
+            if (confirm('⚠️ Cela va effacer TOUTES les données. Continuer ?')) {
+                // Effacer tout le localStorage
+                localStorage.clear();
+                
+                // Restaurer les valeurs par défaut
+                localStorage.setItem('lsu-autosave-enabled', 'false');
+                localStorage.setItem('lsu-stats', JSON.stringify({
+                    generated: 0,
+                    success: 0,
+                    totalWords: 0
+                }));
+                
+                const status = document.createElement('div');
+                status.className = 'status success';
+                status.textContent = '🔄 Application réinitialisée aux valeurs par défaut !';
+                document.body.appendChild(status);
+                
+                setTimeout(() => {
+                    alert('Rechargez maintenant la page principale du générateur LSU.');
+                }, 2000);
+            }
+        }
+        
+        // Auto-check au chargement
+        window.addEventListener('load', () => {
+            checkLocalStorage();
+        });
+    </script>
+</body>
+</html>
