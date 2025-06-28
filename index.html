@@ -1,71 +1,96 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <title>Générateur de Commentaires LSU</title>
-  <link rel="stylesheet" href="styles.css">
-  <style>
-    nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background-color: #2c3e50;
-      padding: 0.5rem 1rem;
-      color: white;
-    }
-    nav .logo {
-      font-weight: bold;
-      font-size: 1.2rem;
-    }
-    nav .links a {
-      color: white;
-      text-decoration: none;
-      margin: 0 0.5rem;
-    }
-    nav .links a:hover {
-      text-decoration: underline;
-    }
-  </style>
-</head>
-<body>
-  <!-- Barre de menu complète -->
-  <nav>
-    <div class="logo">LSU Générateur</div>
-    <div class="links">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Générateur de Commentaires LSU</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      body {
+        margin: 0;
+        font-family: sans-serif;
+        display: flex;
+      }
+
+      .sidebar {
+        background-color: #1f2937;
+        width: 200px;
+        height: 100vh;
+        padding: 2rem 1rem;
+        box-sizing: border-box;
+        color: white;
+        position: fixed;
+        top: 0;
+        left: 0;
+      }
+
+      .sidebar h1 {
+        font-size: 1.3rem;
+        margin-bottom: 2rem;
+        text-align: center;
+      }
+
+      .sidebar a {
+        display: block;
+        color: white;
+        text-decoration: none;
+        margin: 1rem 0;
+        padding: 0.5rem;
+        border-radius: 4px;
+      }
+
+      .sidebar a:hover {
+        background-color: #374151;
+      }
+
+      .main-content {
+        margin-left: 200px;
+        padding: 2rem;
+        width: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Barre de navigation latérale -->
+    <div class="sidebar">
+      <h1>LSU Générateur</h1>
       <a href="index.html">Accueil</a>
       <a href="lsu_generator_fixed.html">Générateur LSU</a>
+      <a href="lsu_generator_final_old.html">Ancienne Version</a>
       <a href="lsu_generator_fixed_nav.html">Version Menu</a>
       <a href="lsu_generator_final.html">Version Finale</a>
-      <a href="lsu_generator_final_old.html">Ancienne Version</a>
       <a href="lsu_debug_tool.html">Outil de Debug</a>
     </div>
-  </nav>
 
-  <h1>Générateur de Commentaires LSU</h1>
+    <!-- Contenu principal -->
+    <div class="main-content">
+      <h1>Générateur de Commentaires LSU</h1>
 
-  <form id="formulaire">
-    <label for="prénom">Prénom :</label>
-    <input type="text" id="prénom" name="prénom" required>
+      <form id="formulaire">
+        <label for="prénom">Prénom :</label>
+        <input type="text" id="prénom" name="prénom" required />
 
-    <label for="classe">Classe :</label>
-    <input type="text" id="classe" name="classe" required>
+        <label for="classe">Classe :</label>
+        <input type="text" id="classe" name="classe" required />
 
-    <label for="comportement">Comportement :</label>
-    <select id="comportement" name="comportement" required>
-      <option value="Très bon">Très bon</option>
-      <option value="Bon">Bon</option>
-      <option value="À améliorer">À améliorer</option>
-    </select>
+        <label for="comportement">Comportement :</label>
+        <select id="comportement" name="comportement" required>
+          <option value="Très bon">Très bon</option>
+          <option value="Bon">Bon</option>
+          <option value="À améliorer">À améliorer</option>
+        </select>
 
-    <label for="commentaire">Commentaire libre :</label>
-    <textarea id="commentaire" name="commentaire" rows="4"></textarea>
+        <label for="commentaire">Commentaire libre :</label>
+        <textarea id="commentaire" name="commentaire" rows="4"></textarea>
 
-    <button type="submit">Générer</button>
-  </form>
+        <button type="submit">Générer</button>
+      </form>
 
-  <h2>Commentaire généré :</h2>
-  <div id="résultat"></div>
+      <h2>Commentaire généré :</h2>
+      <div id="résultat"></div>
+    </div>
 
-  <script src="script.js"></script>
-</body>
+    <script src="script.js"></script>
+  </body>
 </html>
