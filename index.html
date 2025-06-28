@@ -6,38 +6,38 @@
   <link rel="stylesheet" href="styles.css">
   <style>
     nav {
-      background-color: #333;
-      color: white;
-      padding: 10px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      background-color: #2c3e50;
+      padding: 0.5rem 1rem;
+      color: white;
     }
-
     nav .logo {
       font-weight: bold;
-      font-size: 1.2em;
+      font-size: 1.2rem;
     }
-
-    nav a {
+    nav .links a {
       color: white;
-      margin-left: 20px;
       text-decoration: none;
+      margin: 0 0.5rem;
     }
-
-    nav a:hover {
+    nav .links a:hover {
       text-decoration: underline;
     }
   </style>
 </head>
 <body>
-
-  <!-- Barre de menu -->
+  <!-- Barre de menu complète -->
   <nav>
     <div class="logo">LSU Générateur</div>
     <div class="links">
       <a href="index.html">Accueil</a>
-      <a href="lsu_generator_fixed.html">Générateur LSU+</a>
+      <a href="lsu_generator_fixed.html">Générateur LSU</a>
+      <a href="lsu_generator_fixed_nav.html">Version Menu</a>
+      <a href="lsu_generator_final.html">Version Finale</a>
+      <a href="lsu_generator_final_old.html">Ancienne Version</a>
+      <a href="lsu_debug_tool.html">Outil de Debug</a>
     </div>
   </nav>
 
@@ -67,6 +67,5 @@
   <div id="résultat"></div>
 
   <script src="script.js"></script>
-
 </body>
 </html>
