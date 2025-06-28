@@ -1,20 +1,51 @@
 <!DOCTYPE html>
 <html lang="fr">
-<nav>
-  <a href="index.html">Accueil</a>
-  <a href="lsu_generator_fixed.html">Générateur LSU</a>
-</nav>
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Générateur de Commentaires LSU</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    nav {
+      background-color: #333;
+      color: white;
+      padding: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    nav .logo {
+      font-weight: bold;
+      font-size: 1.2em;
+    }
+
+    nav a {
+      color: white;
+      margin-left: 20px;
+      text-decoration: none;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
+
+  <!-- Barre de menu -->
+  <nav>
+    <div class="logo">LSU Générateur</div>
+    <div class="links">
+      <a href="index.html">Accueil</a>
+      <a href="lsu_generator_fixed.html">Générateur LSU+</a>
+    </div>
+  </nav>
+
   <h1>Générateur de Commentaires LSU</h1>
 
   <form id="formulaire">
-    <label for="prenom">Prénom :</label>
-    <input type="text" id="prenom" name="prenom" required>
+    <label for="prénom">Prénom :</label>
+    <input type="text" id="prénom" name="prénom" required>
 
     <label for="classe">Classe :</label>
     <input type="text" id="classe" name="classe" required>
@@ -33,12 +64,9 @@
   </form>
 
   <h2>Commentaire généré :</h2>
-  <div id="resultat"></div>
+  <div id="résultat"></div>
 
   <script src="script.js"></script>
+
 </body>
-  <nav>
-  <a href="index.html">Accueil</a>
-  <a href="lsu_generator_fixed.html">Générateur LSU</a>
-</nav>
 </html>
